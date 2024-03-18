@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block postedit %}
+<div>
+    <h1>Edit Post</h1>
+    <form action="" method="POST">
+        Title <input type="text" name="title" placeholder="{{post.title}}" value="{{post.title}}">
+        <br>
+        Post Content <input type="text" name="content" placeholder="{{post.content}}" value="{{post.content}}">
+        <br>
+        <button formaction="/posts/{{post.id}}" formmethod="GET">Cancel</button>
+        <button  type="submit">Edit</button>
+    </form>
+</div>
+{% endblock %}
