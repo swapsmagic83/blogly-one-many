@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request,redirect
 from flask_debugtoolbar import DebugToolbarExtension
 #from sqlalchemy import text
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, Tag
 
 app = Flask(__name__)
 app.app_context().push()
@@ -112,3 +112,51 @@ def delete_post(post_id):
     db.session.commit()
     return redirect("/users")
     
+@app.route('/tags')
+def list_tags():
+    tags = Tag.query.all()
+    return render_template('alltags.html',tags=tags)
+
+@app.route('/tags/new')
+def add_tag():
+    posts = Post.query.all()
+    return render_template('newtag.html',posts=posts)
+
+@app.route('/tags/new',methods=["POST"])
+def post_tag():
+    post_ids = [int(num) for num in request.form.getlist("posts")]
+    posts = Post.query.filter(Post.id.in_(post_ids)).all()
+    name= request.form["name"]
+    new_tag = Tag(name=name,posts=posts)
+    db.session.add(new_tag)
+    db.session.commit()
+    return redirect('/tags')
+
+@app.route('/tags/<int:tag_id>')
+def get_tag(tag_id):
+    tag = Tag.query.get_or_404(tag_id)
+    return render_template('showtag.html',tag=tag)
+
+@app.route('/tags/<int:tag_id>/edit')
+def edit_tag(tag_id):
+    tag = Tag.query.get_or_404(tag_id)
+    return render_template('edittag.html',tag=tag)
+
+@app.route('/tags/<int:tag_id>/edit', methods=["POST"])
+def post_edittag(tag_id):
+    tag = Tag.query.get_or_404(tag_id)
+    name= request.form["name"]
+    tag.name= name
+    post_ids = [int(num) for num in request.form.getlist("posts")]
+    tag.posts = Post.query.filter(Post.id.in_(post_ids)).all()
+
+    db.session.add(tag)
+    db.session.commit()
+    return redirect("/tags")
+
+@app.route('/tags/<int:tag_id>/delete',methods=["POST"])
+def delete_tag(tag_id):
+    tag=Tag.query.get_or_404(tag_id)
+    db.session.delete(tag)
+    db.session.commit()
+    return redirect('/tags')

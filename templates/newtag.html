@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <h1>Create a tag</h1>
+        <form action="/tags/new" method="POST" >
+            Name <input type="text" name="name" placeholder="Enter a name for the tag">
+            <br>
+            {% for post in posts%}
+            <div>
+            <input class="form-input" type="checkbox" value="{{ post.id }}" id="post_{{ post.id }}" name="posts">
+            
+            <label class="form-check-label" for="post_{{ post.id }}">
+                {{ post.title }}
+              </label>
+            </div>
+            {% endfor %}
+            <br>
+            <button><a href="/tags">Cancel</a></button>
+            <button type="submit">Add</button>
+        </form>
+    </div>
+</body>
+</html>
